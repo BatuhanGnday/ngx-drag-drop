@@ -78,12 +78,12 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
     if (this.draggable) {
       this.renderer.removeClass(
         this.elementRef.nativeElement,
-        this.dndDraggableDisabledClass
+        this.dndDraggableDisabledClass,
       );
     } else {
       this.renderer.addClass(
         this.elementRef.nativeElement,
-        this.dndDraggableDisabledClass
+        this.dndDraggableDisabledClass,
       );
     }
   }
@@ -96,7 +96,7 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
     this.ngZone.runOutsideAngular(() => {
       this.elementRef.nativeElement.addEventListener(
         'drag',
-        this.dragEventHandler
+        this.dragEventHandler,
       );
     });
   }
@@ -104,7 +104,7 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.elementRef.nativeElement.removeEventListener(
       'drag',
-      this.dragEventHandler
+      this.dragEventHandler,
     );
     if (this.isDragStarted) {
       endDrag();
@@ -130,7 +130,7 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
     setDragData(
       event,
       { data: this.dndDraggable, type: this.dndType },
-      dndState.effectAllowed!
+      dndState.effectAllowed!,
     );
 
     this.dragImage = this.determineDragImage();
@@ -152,10 +152,10 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
       () => {
         this.renderer.addClass(
           this.elementRef.nativeElement,
-          this.dndDraggingSourceClass
+          this.dndDraggingSourceClass,
         );
         unregister();
-      }
+      },
     );
 
     this.dndStart.emit(event);
@@ -163,7 +163,9 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
     event.stopPropagation();
 
     setTimeout(() => {
-      this.renderer.setStyle(this.dragImage, 'pointer-events', 'none');
+      if (this.isDragStarted) {
+        this.renderer.setStyle(this.dragImage, 'pointer-events', 'none');
+      }
     }, 100);
 
     return true;
@@ -216,7 +218,7 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
     window.setTimeout(() => {
       this.renderer.removeClass(
         this.elementRef.nativeElement,
-        this.dndDraggingSourceClass
+        this.dndDraggingSourceClass,
       );
     }, 0);
 
@@ -232,7 +234,7 @@ export class DndDraggableDirective implements AfterViewInit, OnDestroy {
   }
 
   private readonly dragEventHandler: (event: DragEvent) => void = (
-    event: DragEvent
+    event: DragEvent,
   ) => this.onDrag(event);
 
   private determineDragImage(): Element {
